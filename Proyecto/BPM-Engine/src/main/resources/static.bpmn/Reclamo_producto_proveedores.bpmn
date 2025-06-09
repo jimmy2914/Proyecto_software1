@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_12iifzl" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.33.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:collaboration id="Reclamo_proveedores">
+    <bpmn:participant id="Participant_1177n2d" name="Asistente" processRef="Reclamo_producto_proveedores" />
+    <bpmn:participant id="Participant_0soxnud" name="Proveedores" processRef="Process_00wbvo7">
+      <bpmn:participantMultiplicity />
+    </bpmn:participant>
+    <bpmn:messageFlow id="Flow_1udnmmc" sourceRef="Event_0bs2ctq" targetRef="Participant_0soxnud" />
+    <bpmn:textAnnotation id="TextAnnotation_1sd2kag">
+      <bpmn:text>Varios Proveedores</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0xulgrt" associationDirection="None" sourceRef="Participant_0soxnud" targetRef="TextAnnotation_1sd2kag" />
+  </bpmn:collaboration>
+  <bpmn:process id="Reclamo_producto_proveedores" name="Reclamo_producto_proveedores" isExecutable="true" camunda:historyTimeToLive="1">
+    <bpmn:laneSet id="LaneSet_0exonrc">
+      <bpmn:lane id="Lane_16o0yyz">
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0bs2ctq</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0yfung6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1ty7pom</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_174u8hw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0l515fy</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_1" name="Se necesita reclamar productos">
+      <bpmn:outgoing>Flow_09emh26</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:intermediateThrowEvent id="Event_0bs2ctq" name="Enviar reclamo al proveedor">
+      <bpmn:incoming>Flow_1hznnag</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ni2foc</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_12e35gn" messageRef="Message_3ngeunh" camunda:delegateExpression="#{enviarReclamoProveedor}" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_09emh26" sourceRef="StartEvent_1" targetRef="Activity_0yfung6" />
+    <bpmn:sequenceFlow id="Flow_1hznnag" sourceRef="Activity_0yfung6" targetRef="Event_0bs2ctq" />
+    <bpmn:serviceTask id="Activity_0yfung6" name="Revisar el producto reclamado" camunda:class="com.proyecto.workflow.MiServiceTaskDelegate">
+      <bpmn:incoming>Flow_09emh26</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hznnag</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1spwwyr" sourceRef="Activity_174u8hw" targetRef="Event_0l515fy" />
+    <bpmn:sequenceFlow id="Flow_1u4ba1w" sourceRef="Activity_1ty7pom" targetRef="Activity_174u8hw" />
+    <bpmn:serviceTask id="Activity_1ty7pom" name="Simular Respuesta Proveedor" camunda:delegateExpression="${simularRespuestaProveedor}">
+      <bpmn:incoming>Flow_0ni2foc</bpmn:incoming>
+      <bpmn:outgoing>Flow_1u4ba1w</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_174u8hw" name="Confirmar reposición" camunda:delegateExpression="${confirmarReposicionDelegate}">
+      <bpmn:incoming>Flow_1u4ba1w</bpmn:incoming>
+      <bpmn:outgoing>Flow_1spwwyr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0l515fy" name="Emitir mensaje de reposición de productos">
+      <bpmn:incoming>Flow_1spwwyr</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1sb64lp" messageRef="Message_2vuf9bc" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0ni2foc" sourceRef="Event_0bs2ctq" targetRef="Activity_1ty7pom" />
+  </bpmn:process>
+  <bpmn:message id="Message_3ngeunh" name="reclamo_proveedor" />
+  <bpmn:message id="Message_2vuf9bc" name="confirmacion_reclamo" />
+  <bpmn:process id="Process_00wbvo7" isExecutable="false" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Reclamo_proveedores">
+      <bpmndi:BPMNShape id="Participant_1177n2d_di" bpmnElement="Participant_1177n2d" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="1198" height="320" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_16o0yyz_di" bpmnElement="Lane_16o0yyz" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="1168" height="320" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="222" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="211" y="285" width="58" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ctdkcd_di" bpmnElement="Event_0bs2ctq">
+        <dc:Bounds x="532" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="507" y="212" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nbmbtf_di" bpmnElement="Activity_0yfung6">
+        <dc:Bounds x="340" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gavm53_di" bpmnElement="Activity_1ty7pom">
+        <dc:Bounds x="710" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09rfjws_di" bpmnElement="Activity_174u8hw">
+        <dc:Bounds x="990" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_12jxv0j_di" bpmnElement="Event_0l515fy">
+        <dc:Bounds x="1212" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1186" y="285" width="89" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_09emh26_di" bpmnElement="Flow_09emh26">
+        <di:waypoint x="258" y="260" />
+        <di:waypoint x="340" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hznnag_di" bpmnElement="Flow_1hznnag">
+        <di:waypoint x="440" y="260" />
+        <di:waypoint x="532" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1spwwyr_di" bpmnElement="Flow_1spwwyr">
+        <di:waypoint x="1090" y="260" />
+        <di:waypoint x="1212" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u4ba1w_di" bpmnElement="Flow_1u4ba1w">
+        <di:waypoint x="810" y="260" />
+        <di:waypoint x="990" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ni2foc_di" bpmnElement="Flow_0ni2foc">
+        <di:waypoint x="568" y="260" />
+        <di:waypoint x="710" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_0soxnud_di" bpmnElement="Participant_0soxnud" isHorizontal="true">
+        <dc:Bounds x="160" y="430" width="1198" height="110" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0xulgrt_di" bpmnElement="Association_0xulgrt">
+        <di:waypoint x="824" y="540" />
+        <di:waypoint x="882" y="590" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1sd2kag_di" bpmnElement="TextAnnotation_1sd2kag">
+        <dc:Bounds x="850" y="590" width="100" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1udnmmc_di" bpmnElement="Flow_1udnmmc">
+        <di:waypoint x="550" y="278" />
+        <di:waypoint x="550" y="430" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

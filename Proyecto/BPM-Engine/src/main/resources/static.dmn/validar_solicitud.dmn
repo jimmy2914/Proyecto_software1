@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="validar-solicitud-def" name="Validar Solicitud" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.33.1">
+  <decision id="validar_solicitud" name="Validar Solicitud" camunda:historyTimeToLive="1">
+    <decisionTable hitPolicy="FIRST">
+      <input id="motivo" label="Motivo">
+        <inputExpression typeRef="string">
+          <text>motivo</text>
+        </inputExpression>
+      </input>
+      <input id="tiempo" label="Tiempo">
+        <inputExpression typeRef="integer">
+          <text>tiempo</text>
+        </inputExpression>
+      </input>
+      <input id="factura" label="Factura">
+        <inputExpression typeRef="string">
+          <text>facturaValidacion</text>
+        </inputExpression>
+      </input>
+      <input id="estado" label="Estado del producto">
+        <inputExpression typeRef="string">
+          <text>estadoProducto</text>
+        </inputExpression>
+      </input>
+      <output id="resultado" label="Resultado" name="resultado" typeRef="string" />
+      <rule id="r1">
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Sin factura"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"Rechazada"</text>
+        </outputEntry>
+      </rule>
+      <rule id="r2">
+        <inputEntry>
+          <text>"Defectuoso"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Valida"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Abierto"</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"Rechazada"</text>
+        </outputEntry>
+      </rule>
+      <rule id="r3">
+        <inputEntry>
+          <text>"Vencido"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>&lt;= 5</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Valida"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Sellado"</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"Aprobada"</text>
+        </outputEntry>
+      </rule>
+      <rule id="r4">
+        <inputEntry>
+          <text>"Vencido"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>[6..30]</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Valida"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Sellado"</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"Rechazada"</text>
+        </outputEntry>
+      </rule>
+      <rule id="r5">
+        <inputEntry>
+          <text>"Vencido"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>&gt; 30</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Valida"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Sellado"</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"Rechazada"</text>
+        </outputEntry>
+      </rule>
+      <rule id="r6">
+        <inputEntry>
+          <text>"Defectuoso"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>&lt;= 30</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Valida"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Sellado"</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"Aprobada"</text>
+        </outputEntry>
+      </rule>
+      <rule id="r7">
+        <inputEntry>
+          <text>"Defectuoso"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>&gt; 30</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Valida"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Sellado"</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"Revision"</text>
+        </outputEntry>
+      </rule>
+      <rule id="r8">
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Valida"</text>
+        </inputEntry>
+        <inputEntry>
+          <text>"Abierto"</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"Rechazada"</text>
+        </outputEntry>
+      </rule>
+      <rule id="r_default">
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"Revision"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_0peh2j8">
+      <dmndi:DMNShape id="DMNShape_1ggigee" dmnElementRef="validar_solicitud">
+        <dc:Bounds height="80" width="180" x="150" y="80" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

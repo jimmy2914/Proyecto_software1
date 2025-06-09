@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Procesos</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f2f4f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      background-color: #0d6efd;
+      color: white;
+      padding: 40px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2em;
+    }
+
+    #procesos {
+      margin: 30px 0;
+    }
+
+    #procesos button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    #procesos button:hover {
+      background-color: #0056b3;
+    }
+
+    form, #credito-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+      margin-bottom: 40px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    button[type="submit"], .btn-verde {
+      background-color: #28a745;
+      color: white;
+      margin-top: 25px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    button[type="submit"]:hover, .btn-verde:hover {
+      background-color: #218838;
+    }
+
+    .btn-rojo {
+      background-color: #dc3545;
+      color: white;
+      margin-top: 15px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    .btn-rojo:hover {
+      background-color: #c82333;
+    }
+
+    .titulo-formulario {
+      font-size: 1.4em;
+      color: #333;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="titulo-hero">Seleccione el proceso que desea iniciar</h1>
+  </header>
+
+  <div id="procesos"></div>
+  <div id="formulario-container"></div>
+
+  <script>
+    let tareaPendiente = null;
+
+    window.onload = async function () {
+      await cargarProcesos();
+      await verificarTareaPendiente();
+    };
+
+    async function cargarProcesos() {
+      const respuesta = await fetch("/api/procesos");
+      const procesos = await respuesta.json();
+      const contenedor = document.getElementById("procesos");
+
+      procesos.forEach(proceso => {
+        const boton = document.createElement("button");
+        boton.textContent = proceso.nombre;
+        boton.onclick = () => seleccionarProceso(proceso.id);
+        contenedor.appendChild(boton);
+      });
+    }
+
+    async function verificarTareaPendiente() {
+      const respuesta = await fetch("/api/instancias/tarea-actual/Proceso_devolucion");
+      if (!respuesta.ok) return;
+
+      const data = await respuesta.json();
+      tareaPendiente = data;
+      console.log("Tarea actual encontrada:", data);
+
+      const nombre = data.nombreTarea;
+      const variables = data.variables || {};
+
+      if (nombre === "Corregir solicitud de devolución") {
+        document.getElementById("titulo-hero").textContent = "Corrija su solicitud de devolución";
+        const components = await cargarFormulario("proceso_devolucion");
+        renderizarFormulario(components, "Proceso_devolucion", data.taskId, true, variables);
+      }
+
+      if (nombre === "Seleccionar crédito") {
+        document.getElementById("titulo-hero").textContent = "Seleccione el tipo de crédito";
+        mostrarSeleccionCredito(data.taskId, variables["tipoCredito"]?.value || "No disponible");
+      }
+    }
+
+    async function seleccionarProceso(id) {
+      document.getElementById("titulo-hero").textContent = "Formulario de Solicitud de Devolución";
+      const components = await cargarFormulario(id);
+      renderizarFormulario(components, id);
+    }
+
+    async function cargarFormulario(id) {
+      const respuesta = await fetch(`/api/formularios/${id}`);
+      const data = await respuesta.json();
+      return data.components;
+    }
+
+    function renderizarFormulario(components, procesoId, taskId = null, modoEdicion = false, variables = {}) {
+      const container = document.getElementById("formulario-container");
+      const form = document.createElement("form");
+
+      const titulo = document.createElement("div");
+      titulo.className = "titulo-formulario";
+      titulo.textContent = modoEdicion ? "Corrija su solicitud" : "Complete la solicitud";
+      form.appendChild(titulo);
+
+      form.onsubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const datos = {};
+        for (const [key, value] of formData.entries()) datos[key] = value;
+
+        if (modoEdicion && taskId) {
+            const r = await fetch(`/api/instancias/tarea/completar/${taskId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datos),
+            });
+            alert(await r.text());
+        } else {
+            const r = await fetch(`/api/instancias/iniciar-completo/${procesoId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datos),
+            });
+            alert(await r.text());
+        }
+
+        location.reload();
+      };
+
+      components.forEach(campo => {
+        const label = document.createElement("label");
+        label.textContent = campo.label;
+        form.appendChild(label);
+
+        let input;
+        switch (campo.type) {
+          case "textfield":
+          case "number":
+            input = document.createElement("input");
+            input.type = campo.type === "number" ? "number" : "text";
+            break;
+          case "textarea":
+            input = document.createElement("textarea");
+            break;
+          case "select":
+            input = document.createElement("select");
+            campo.values.forEach(opcion => {
+              const option = document.createElement("option");
+              option.value = opcion.value;
+              option.textContent = opcion.label;
+              input.appendChild(option);
+            });
+            break;
+          default:
+            input = document.createElement("input");
+            input.type = "text";
+        }
+
+        input.name = campo.key;
+        if (modoEdicion && variables[campo.key]) {
+          input.value = variables[campo.key].value || "";
+        }
+        input.required = true;
+        form.appendChild(input);
+      });
+
+      const boton = document.createElement("button");
+      boton.type = "submit";
+      boton.textContent = modoEdicion ? "Enviar corrección" : "Enviar solicitud";
+      form.appendChild(boton);
+
+      container.innerHTML = "";
+      container.appendChild(form);
+
+      if (modoEdicion) {
+        const botonSimular = document.createElement("button");
+        botonSimular.type = "button";
+        botonSimular.textContent = "Simular que pasaron 3 días";
+        botonSimular.style.marginTop = "10px";
+        botonSimular.onclick = async () => {
+            const r = await fetch("/api/instancias/simular-timer", { method: "POST" });
+            alert(await r.text());
+            location.reload();
+        };
+        form.appendChild(botonSimular);
+      }
+    }
+
+    function mostrarSeleccionCredito(taskId, tipoCredito) {
+      const container = document.getElementById("formulario-container");
+      container.innerHTML = "";
+
+      const div = document.createElement("div");
+      div.id = "credito-container";
+
+      const titulo = document.createElement("div");
+      titulo.className = "titulo-formulario";
+      titulo.textContent = "Crédito sugerido: " + tipoCredito;
+      div.appendChild(titulo);
+
+      const aceptar = document.createElement("button");
+      aceptar.className = "btn-verde";
+      aceptar.textContent = "Aceptar crédito";
+      aceptar.onclick = async () => {
+        await enviarRespuestaCredito(taskId, "True");
+      };
+
+      const rechazar = document.createElement("button");
+      rechazar.className = "btn-rojo";
+      rechazar.textContent = "Rechazar crédito";
+      rechazar.style.marginLeft = "10px";
+      rechazar.onclick = async () => {
+        await enviarRespuestaCredito(taskId, "False");
+      };
+
+      div.appendChild(aceptar);
+      div.appendChild(rechazar);
+      container.appendChild(div);
+    }
+
+    async function enviarRespuestaCredito(taskId, valor) {
+      const body = { credito: valor };
+      const r = await fetch(`/api/instancias/tarea/completar/${taskId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      alert(await r.text());
+      location.reload();
+    }
+  </script>
+</body>
+</html>

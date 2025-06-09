@@ -1,0 +1,135 @@
+{
+  "components": [
+    {
+      "label": "Numero de factura",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0kjq0p1",
+        "columns": null
+      },
+      "id": "Field_07mk501",
+      "key": "factura",
+      "description": "Ingrese el numero de la factura"
+    },
+    {
+      "label": "Tipo de devolucion",
+      "values": [
+        {
+          "label": "Reembolso de dinero",
+          "value": "Reembolso"
+        },
+        {
+          "label": "Reposición de productos",
+          "value": "Reposicion"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_0ttvkzt",
+        "columns": null
+      },
+      "id": "Field_1vjgc8t",
+      "key": "tipoDevolucion",
+      "description": "Seleccione el tipo de devolucion"
+    },
+    {
+      "label": "Motivo de la devolucion",
+      "values": [
+        {
+          "label": "Producto defectuoso",
+          "value": "Defectuoso"
+        },
+        {
+          "label": "Producto vencido",
+          "value": "Vencido"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_01h20r6",
+        "columns": null
+      },
+      "id": "Field_1vo6tdp",
+      "key": "motivo",
+      "description": "Selecciones le motivo de la devolucion"
+    },
+    {
+      "label": "Estado del producto",
+      "values": [
+        {
+          "label": "Abierto",
+          "value": "Abierto"
+        },
+        {
+          "label": "Sellado",
+          "value": "Sellado"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_0vo1qtd",
+        "columns": 16
+      },
+      "id": "Field_1ynlt0z",
+      "key": "estadoProducto",
+      "description": "Seleccione el estado del producto"
+    },
+    {
+      "label": "Tipo de producto",
+      "values": [
+        {
+          "label": "Medicamento",
+          "value": "Medicamento"
+        },
+        {
+          "label": "Suplemento Dietario",
+          "value": "Suplemento Dietario"
+        },
+        {
+          "label": "Producto de Aseo",
+          "value": "Producto de Aseo"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_0f64l9n",
+        "columns": null
+      },
+      "id": "Field_0hku7d8",
+      "key": "tipoProducto",
+      "description": "Seleccione el tipo de producto"
+    },
+    {
+      "label": "Tiempo desde que recibio el pedido",
+      "type": "number",
+      "layout": {
+        "row": "Row_1jotzad",
+        "columns": null
+      },
+      "id": "Field_1095utq",
+      "key": "tiempo",
+      "description": "Ingrese los dias desde que se recibio el pedido",
+      "properties": {}
+    },
+    {
+      "label": "Descricpion",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_0okgc5s",
+        "columns": null
+      },
+      "id": "Field_1ncsd1f",
+      "key": "descripcion",
+      "description": "Detalles adicionales del reclamo"
+    }
+  ],
+  "type": "default",
+  "id": "diligenciar_solicitud",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.33.1"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.22.0",
+  "schemaVersion": 18
+}
